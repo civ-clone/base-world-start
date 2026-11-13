@@ -1,0 +1,38 @@
+{
+  "name": "@civ-clone/base-world-start",
+  "version": "0.1.0",
+  "description": "Building blocks for starting a game's world: building it from the game's options on the grids a ruleset allows, picking a world generator, and picking where each player starts. The ruleset keeps its own rules and numbers.",
+  "repository": "git@github.com:civ-clone/base-world-start.git",
+  "keywords": [
+    "typescript",
+    "civilization"
+  ],
+  "author": "dom111 <dom111@users.noreply.github.com>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "build": "npm run ts:compile && npm run prettier:format",
+    "prettier:check": "prettier --config .prettierrc --check '**/*.ts'",
+    "prettier:format": "prettier --config .prettierrc '**/*.ts' --write",
+    "test": "ts-mocha ./tests/*.test.ts",
+    "ts:compile": "tsc --build tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.0.0",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "^16.0.0",
+    "chai": "^4.0.0",
+    "mocha": "^10.0.0",
+    "prettier": "^2.8.8",
+    "ts-mocha": "^10.0.0",
+    "typescript": "^4.0.0"
+  },
+  "dependencies": {
+    "@civ-clone/base-player": "^0.1.0",
+    "@civ-clone/core-engine": "^0.1.0",
+    "@civ-clone/core-rule": "^0.1.0",
+    "@civ-clone/core-terrain": "^0.1.0",
+    "@civ-clone/core-world": "^0.1.24",
+    "@civ-clone/core-world-generator": "^0.1.7"
+  }
+}
