@@ -1,4 +1,5 @@
 import Engine from '@civ-clone/core-engine/Engine';
+import LandMassRegistry from '@civ-clone/core-world/LandMassRegistry';
 import RuleRegistry from '@civ-clone/core-rule/RuleRegistry';
 import World from '@civ-clone/core-world/World';
 export interface WorldDefaults {
@@ -13,6 +14,7 @@ export interface StartWorldOptions {
   defaults: WorldDefaults;
   topologyIds?: string[];
   check?: (topologyId: string) => void;
+  landMassRegistry?: LandMassRegistry;
 }
 export declare class UnsupportedTopologyError extends Error {}
 /**
@@ -24,6 +26,6 @@ export declare class UnsupportedTopologyError extends Error {}
 export declare const startWorld: (
   ruleRegistry: RuleRegistry,
   engine: Engine,
-  { defaults, topologyIds, check }: StartWorldOptions
+  { defaults, topologyIds, check, landMassRegistry }: StartWorldOptions
 ) => World;
 export default startWorld;

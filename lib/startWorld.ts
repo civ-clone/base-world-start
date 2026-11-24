@@ -1,4 +1,5 @@
 import Engine from '@civ-clone/core-engine/Engine';
+import LandMassRegistry from '@civ-clone/core-world/LandMassRegistry';
 import PickGenerator from '@civ-clone/core-world-generator/Rules/PickGenerator';
 import RuleRegistry from '@civ-clone/core-rule/RuleRegistry';
 import World from '@civ-clone/core-world/World';
@@ -20,6 +21,9 @@ export interface StartWorldOptions {
   topologyIds?: string[];
   // Asked of the grid before a generator is picked, so a ruleset can refuse a combination of options by throwing.
   check?: (topologyId: string) => void;
+  // Where the world registers its continents: the game's own (`game.landMasses`), so a game built with its own
+  //  registries finds them where it looks (civ-clone/web-renderer#301). core-world's instance if not given.
+  landMassRegistry?: LandMassRegistry;
 }
 
 export class UnsupportedTopologyError extends Error {}
@@ -33,7 +37,7 @@ export class UnsupportedTopologyError extends Error {}
 export const startWorld = (
   ruleRegistry: RuleRegistry,
   engine: Engine,
-  { defaults, topologyIds, check }: StartWorldOptions
+  { defaults, topologyIds, check, landMassRegistry }: StartWorldOptions
 ): World => {
   const topologyId: string = engine.option('topologyId', defaults.topologyId);
 
@@ -71,7 +75,7 @@ export const startWorld = (
   // here rather than part way through building the world.
   generator.topology().validate(generator.width(), generator.height());
 
-  const world: World = new World(generator, ruleRegistry);
+  const world: World = new World(generator, ruleRegistry, landMassRegistry);
 
   world.build();
 

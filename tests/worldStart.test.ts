@@ -2,6 +2,10 @@ import { UnsupportedTopologyError, startWorld } from '../lib/startWorld';
 import Built from '@civ-clone/core-world/Rules/Built';
 import Effect from '@civ-clone/core-rule/Effect';
 import Engine from '@civ-clone/core-engine/Engine';
+import {
+  LandMassRegistry,
+  instance as landMassRegistryInstance,
+} from '@civ-clone/core-world/LandMassRegistry';
 import Generator from '@civ-clone/core-world-generator/Generator';
 import GeneratorRegistry from '@civ-clone/core-world-generator/GeneratorRegistry';
 import PickGenerator from '@civ-clone/core-world-generator/Rules/PickGenerator';
@@ -9,7 +13,7 @@ import RuleRegistry from '@civ-clone/core-rule/RuleRegistry';
 import StartTilePicker from '../lib/StartTilePicker';
 import Terrain from '@civ-clone/core-terrain/Terrain';
 import Tile from '@civ-clone/core-world/Tile';
-import { Water } from '@civ-clone/core-terrain/Types';
+import { Land, Water } from '@civ-clone/core-terrain/Types';
 import World from '@civ-clone/core-world/World';
 import { expect } from 'chai';
 import pickGenerator from '../lib/pickGenerator';
@@ -198,6 +202,42 @@ describe('startWorld', (): void => {
       "unknown topology 'triangle'"
     );
     expect(generated).to.equal(0);
+  });
+
+  it("registers the world's continents in the land-mass registry it is given", async (): Promise<void> => {
+    const ruleRegistry = new RuleRegistry(),
+      engine = new Engine(),
+      landMassRegistry = new LandMassRegistry(),
+      defaultLandMasses = landMassRegistryInstance.length;
+
+    class Island extends Land {}
+
+    // One continent: a column of land down the middle of a sea.
+    class IslandGenerator extends WaterGenerator {
+      async generate(): Promise<Terrain[]> {
+        return Array.from(
+          { length: this.height() * this.width() },
+          (_: unknown, i: number): Terrain =>
+            i % this.width() === 3 ? new Island() : new Deep()
+        );
+      }
+    }
+
+    let resolveBuilt: (world: World) => void = () => {};
+    const built = new Promise<World>((resolve) => (resolveBuilt = resolve));
+
+    ruleRegistry.register(
+      new PickGenerator(new Effect(() => IslandGenerator)),
+      new Built(new Effect((world: World): void => resolveBuilt(world)))
+    );
+
+    startWorld(ruleRegistry, engine, { defaults, landMassRegistry });
+
+    await built;
+
+    expect(landMassRegistry.entries()).to.have.length(1);
+    expect(landMassRegistry.entries()[0].tiles()).to.have.length(6);
+    expect(landMassRegistryInstance.length).to.equal(defaultLandMasses);
   });
 });
 
