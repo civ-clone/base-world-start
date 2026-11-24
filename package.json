@@ -1,6 +1,6 @@
 {
   "name": "@civ-clone/base-world-start",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Building blocks for starting a game's world: building it from the game's options on the grids a ruleset allows, picking a world generator, and picking where each player starts. The ruleset keeps its own rules and numbers.",
   "repository": "git@github.com:civ-clone/base-world-start.git",
   "keywords": [
